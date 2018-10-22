@@ -9,7 +9,8 @@
 		daysMin: ["Di", "Hë", "Ma", "Më", "En", "Pr", "Sht"],
 		months: ["Janar", "Shkurt", "Mars", "Prill", "Maj", "Qershor", "Korrik", "Gusht", "Shtator", "Tetor", "Nëntor", "Dhjetor"],
 		monthsShort: ["Jan", "Shk", "Mar", "Pri", "Maj", "Qer", "Korr", "Gu", "Sht", "Tet", "Nën", "Dhjet"],
-		today: "Sot"
+		today: "Sot",
+        dateModel: Date
 	};
 }(jQuery));
 

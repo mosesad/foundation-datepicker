@@ -13,6 +13,7 @@
 		clear: "삭제",
 		format: "YYYY-MM-DD",
 		titleFormat: "yyyy년mm월",
-		weekStart: 0
+		weekStart: 0,
+        dateModel: Date
 	};
 }(jQuery));

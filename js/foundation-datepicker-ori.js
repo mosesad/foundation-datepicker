@@ -6,21 +6,12 @@
 ! function($) {
 
     function UTCDate() {
-        return new _Date(_Date.UTC.apply(Date, arguments));
+        return new Date(Date.UTC.apply(Date, arguments));
     }
 
     function UTCToday() {
-        var today = new _Date();
+        var today = new Date();
         return UTCDate(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
-    }
-
-    var _Date = Date;
-
-    function setDateModel(lang){
-        var dateModel = dates[lang].dateModel;
-        if (dateModel){
-            _Date = dateModel;
-        }
     }
 
     var Datepicker = function(element, options) {
@@ -33,7 +24,6 @@
         this.language = options.language || this.element.data('date-language') || "en";
         this.language = this.language in dates ? this.language : this.language.split('-')[0]; //Check if "de-DE" style date is available, if not language should fallback to 2 letter code eg "de"
         this.language = this.language in dates ? this.language : "en";
-        setDateModel(this.language);
         this.isRTL = dates[this.language].rtl || false;
         this.format = DPGlobal.parseFormat(options.format || this.element.data('date-format') || dates[this.language].format || 'mm/dd/yyyy');
         this.formatText = options.format || this.element.data('date-format') || dates[this.language].format || 'mm/dd/yyyy';
@@ -183,6 +173,11 @@
         this.setDaysOfWeekDisabled(options.daysOfWeekDisabled || this.element.data('date-days-of-week-disabled'));
         this.setDatesDisabled(options.datesDisabled || this.element.data('dates-disabled'));
 
+        if (this.initialDate != null) {
+            this.date = this.viewDate = DPGlobal.parseDate(this.initialDate, this.format, this.language);
+            this.setValue();
+        }
+
         this.fillDow();
         this.fillMonths();
         this.update();
@@ -318,7 +313,7 @@
 
         getDate: function() {
             var d = this.getUTCDate();
-            return new _Date(d.getTime() + (d.getTimezoneOffset() * 60000));
+            return new Date(d.getTime() + (d.getTimezoneOffset() * 60000));
         },
 
         getUTCDate: function() {
@@ -326,7 +321,7 @@
         },
 
         setDate: function(d) {
-            this.setUTCDate(new _Date(d.getTime() - (d.getTimezoneOffset() * 60000)));
+            this.setUTCDate(new Date(d.getTime() - (d.getTimezoneOffset() * 60000)));
         },
 
         setUTCDate: function(d) {
@@ -396,9 +391,13 @@
 
         place: function() {
             if (this.isInline) return;
-            var zIndex = parseInt(this.element.parents().filter(function() {
-                return $(this).css('z-index') != 'auto';
-            }).first().css('z-index')) + 10;
+            var zIndexes = [];
+            this.element.parents().map(function() {
+                if ($(this).css('z-index') != 'auto') {
+                    zIndexes.push(parseInt($(this).css('z-index')));
+                }
+            });
+            var zIndex = zIndexes.sort(function(a, b) { return a - b; }).pop() + 10;
             var textbox = this.component ? this.component : this.element;
             var offset = textbox.offset();
             var height = textbox.outerHeight() + parseInt(textbox.css('margin-top'));
@@ -406,12 +405,17 @@
             var fullOffsetTop = offset.top + height;
             var offsetLeft = offset.left;
             this.picker.removeClass('datepicker-top datepicker-bottom');
-            // if the datepicker is going to be below the window, show it on top of the input
-            if ((fullOffsetTop + this.picker.outerHeight()) >= $(window).scrollTop() + $(window).height()) {
+            // can we show it on top?
+            var canShowTop = ($(window).scrollTop() < offset.top - this.picker.outerHeight());
+            var canShowBottom = (fullOffsetTop + this.picker.outerHeight()) < $(window).scrollTop() + $(window).height();
+            // If the datepicker is going to be below the window, show it on top of the input if it fits
+            if (!canShowBottom && canShowTop) {
                 fullOffsetTop = offset.top - this.picker.outerHeight();
                 this.picker.addClass('datepicker-top');
             }
             else {
+                // Scroll up if we cannot show it on bottom or top (for mobile devices)
+                if (!canShowBottom) $(window).scrollTop(offset.top);
                 this.picker.addClass('datepicker-bottom');
             }
 
@@ -433,14 +437,10 @@
             if (arguments && arguments.length && (typeof arguments[0] === 'string' || arguments[0] instanceof Date)) {
                 date = arguments[0];
                 fromArgs = true;
-            } 
-            else if (!currentVal && this.initialDate != null) { // If value is not set, set it to the initialDate 
-                date = this.initialDate
             }
             else {
                 date = this.isInput ? this.element.val() : this.element.data('date') || this.element.find('input').val();
             }
-    
             if (date && date.length > this.formatText.length) {
                     $(this.picker).addClass('is-invalid')
                     $(this.element).addClass('is-invalid-input')
@@ -448,19 +448,25 @@
             } else {
                 $(this.picker).removeClass('is-invalid')
                 $(this.element).removeClass('is-invalid-input')
-                  
             }
         
-            this.date = DPGlobal.parseDate(date, this.format, this.language);  
+            this.date = DPGlobal.parseDate(date, this.format, this.language);
 
-            if (fromArgs || this.initialDate != null) this.setValue();
+            if (fromArgs) {
+                this.setValue();
+            } else if (currentVal == "") {
+                this.element.trigger({
+                    type: 'changeDate',
+                    date: null
+                });
+            }
 
             if (this.date < this.startDate) {
-                this.viewDate = new _Date(this.startDate.valueOf());
+                this.viewDate = new Date(this.startDate.valueOf());
             } else if (this.date > this.endDate) {
-                this.viewDate = new _Date(this.endDate.valueOf());
+                this.viewDate = new Date(this.endDate.valueOf());
             } else {
-                this.viewDate = new _Date(this.date.valueOf());
+                this.viewDate = new Date(this.date.valueOf());
             }
             this.fill();
         },
@@ -494,7 +500,7 @@
                 return;
             }
 
-            var d = new _Date(this.viewDate.valueOf()),
+            var d = new Date(this.viewDate.valueOf()),
                 year = d.getUTCFullYear(),
                 month = d.getUTCMonth(),
                 dayMonth = d.getUTCDate(),
@@ -505,10 +511,10 @@
                 endYear = this.endDate !== Infinity ? this.endDate.getUTCFullYear() : Infinity,
                 endMonth = this.endDate !== Infinity ? this.endDate.getUTCMonth() : Infinity,
                 currentDate = this.date && UTCDate(this.date.getUTCFullYear(), this.date.getUTCMonth(), this.date.getUTCDate()).valueOf(),
-                today = new _Date(),
+                today = new Date(),
                 titleFormat = dates[this.language].titleFormat || dates['en'].titleFormat;
             // this.picker.find('.datepicker-days thead th.date-switch')
-            // 			.text(DPGlobal.formatDate(new UTCDate(year, month), titleFormat, this.language));
+            //          .text(DPGlobal.formatDate(new UTCDate(year, month), titleFormat, this.language));
 
             this.picker.find('.datepicker-days thead th:eq(1)')
                 .text(dates[this.language].months[month] + ' ' + year);
@@ -527,7 +533,7 @@
                 day = DPGlobal.getDaysInMonth(prevMonth.getUTCFullYear(), prevMonth.getUTCMonth());
             prevMonth.setUTCDate(day);
             prevMonth.setUTCDate(day - (prevMonth.getUTCDay() - this.weekStart + 7) % 7);
-            var nextMonth = new _Date(prevMonth.valueOf());
+            var nextMonth = new Date(prevMonth.valueOf());
             nextMonth.setUTCDate(nextMonth.getUTCDate() + 42);
             nextMonth = nextMonth.valueOf();
             var html = [];
@@ -537,8 +543,8 @@
                     html.push('<tr>');
                     if (this.calendarWeeks) {
                         // adapted from https://github.com/timrwood/moment/blob/master/moment.js#L128
-                        var a = new _Date(prevMonth.getUTCFullYear(), prevMonth.getUTCMonth(), prevMonth.getUTCDate() - prevMonth.getDay() + 10 - (this.weekStart && this.weekStart % 7 < 5 && 7)),
-                            b = new _Date(a.getFullYear(), 0, 4),
+                        var a = new Date(prevMonth.getUTCFullYear(), prevMonth.getUTCMonth(), prevMonth.getUTCDate() - prevMonth.getDay() + 10 - (this.weekStart && this.weekStart % 7 < 5 && 7)),
+                            b = new Date(a.getFullYear(), 0, 4),
                             calWeek = ~~((a - b) / 864e5 / 7 + 1.5);
                         html.push('<td class="cw">' + calWeek + '</td>');
                     }
@@ -635,7 +641,7 @@
         },
 
         updateNavArrows: function() {
-            var d = new _Date(this.viewDate),
+            var d = new Date(this.viewDate),
                 year = d.getUTCFullYear(),
                 month = d.getUTCMonth(),
                 day = d.getUTCDate(),
@@ -931,7 +937,7 @@
 
         moveHour: function(date, dir) {
             if (!dir) return date;
-            var new_date = new _Date(date.valueOf());
+            var new_date = new Date(date.valueOf());
             dir = dir > 0 ? 1 : -1;
             new_date.setUTCHours(new_date.getUTCHours() + dir);
             return new_date;
@@ -939,7 +945,7 @@
 
         moveDate: function(date, dir) {
             if (!dir) return date;
-            var new_date = new _Date(date.valueOf());
+            var new_date = new Date(date.valueOf());
             dir = dir > 0 ? 1 : -1;
             new_date.setUTCDate(new_date.getUTCDate() + dir);
             return new_date;
@@ -947,7 +953,7 @@
 
         moveMonth: function(date, dir) {
             if (!dir) return date;
-            var new_date = new _Date(date.valueOf()),
+            var new_date = new Date(date.valueOf()),
                 day = new_date.getUTCDate(),
                 month = new_date.getUTCMonth(),
                 mag = Math.abs(dir),
@@ -1052,9 +1058,9 @@
                         newDate = this.moveMonth(this.date, dir);
                         newViewDate = this.moveMonth(this.viewDate, dir);
                     } else {
-                        newDate = new _Date(this.date.valueOf());
+                        newDate = new Date(this.date.valueOf());
                         newDate.setUTCDate(this.date.getUTCDate() + dir * 7);
-                        newViewDate = new _Date(this.viewDate.valueOf());
+                        newViewDate = new Date(this.viewDate.valueOf());
                         newViewDate.setUTCDate(this.viewDate.getUTCDate() + dir * 7);
                     }
                     if (this.dateWithinRange(newDate)) {
@@ -1100,18 +1106,25 @@
                 }
             }
             /*
-            	vitalets: fixing bug of very special conditions:
-            	jquery 1.7.1 + webkit + show inline datepicker in bootstrap popover.
-            	Method show() does not set display css correctly and datepicker is not shown.
-            	Changed to .css('display', 'block') solve the problem.
-            	See https://github.com/vitalets/x-editable/issues/37
+                vitalets: fixing bug of very special conditions:
+                jquery 1.7.1 + webkit + show inline datepicker in bootstrap popover.
+                Method show() does not set display css correctly and datepicker is not shown.
+                Changed to .css('display', 'block') solve the problem.
+                See https://github.com/vitalets/x-editable/issues/37
 
-            	In jquery 1.7.2+ everything works fine.
+                In jquery 1.7.2+ everything works fine.
             */
             //this.picker.find('>div').hide().filter('.datepicker-'+DPGlobal.modes[this.viewMode].clsName).show();
             this.picker.find('>div').hide().filter('.datepicker-' + DPGlobal.modes[this.viewMode].clsName).css('display', 'block');
             this.updateNavArrows();
         },
+
+        changeViewDate: function(date) {
+            this.date = date;
+            this.viewDate = date;
+            this.fill();
+        },
+
         reset: function(e) {
             this._setDate(null, 'date');
         }
@@ -1147,8 +1160,7 @@
             months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
             monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
             today: "Today",
-            titleFormat: "MM yyyy",
-            dateModel: Date
+            titleFormat: "MM yyyy"
         }
     };
 
@@ -1178,12 +1190,7 @@
             return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
         },
         getDaysInMonth: function(year, month) {
-            if ( typeof _Date == Date ){
-                return [31, (DPGlobal.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
-            } else {
-                return (new _Date(year, month)).getDaysInMonth();
-            }
-            
+            return [31, (DPGlobal.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
         },
         validParts: /hh?|ii?|ss?|dd?|mm?|MM?|yy(?:yy)?/g,
         nonpunctuation: /[^ -\/:-@\[\u3400-\u9fff-`{-~\t\n\r]+/g,
@@ -1202,7 +1209,7 @@
             };
         },
         parseDate: function(date, format, language) {
-            if (date instanceof Date) return new _Date(date.valueOf() - date.getTimezoneOffset() * 60000);
+            if (date instanceof Date) return new Date(date.valueOf() - date.getTimezoneOffset() * 60000);
             if (/^\d{4}\-\d{1,2}\-\d{1,2}$/.test(date)) {
                 format = this.parseFormat('yyyy-mm-dd');
             }
@@ -1216,7 +1223,7 @@
                 var part_re = /([-+]\d+)([dmwy])/,
                     parts = date.match(/([-+]\d+)([dmwy])/g),
                     part, dir;
-                date = new _Date();
+                date = new Date();
                 for (var i = 0; i < parts.length; i++) {
                     part = part_re.exec(parts[i]);
                     dir = parseInt(part[1]);
@@ -1238,7 +1245,7 @@
                 return UTCDate(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
             }
             var parts = date && date.match(this.nonpunctuation) || [],
-                date = new _Date(),
+                date = new Date(),
                 parsed = {},
                 setters_order = ['hh', 'h', 'ii', 'i', 'ss', 's', 'yyyy', 'yy', 'M', 'MM', 'm', 'mm', 'd', 'dd'],
                 setters_map = {

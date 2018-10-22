@@ -12,6 +12,7 @@
 		today: "Այսօր",
 		clear: "Ջնջել",
 		format: "dd.mm.yyyy",
-		weekStart: 1
+		weekStart: 1,
+        dateModel: Date
 	};
 }(jQuery));

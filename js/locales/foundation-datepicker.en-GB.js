@@ -12,6 +12,7 @@
 		today: "Today",
 		clear: "Clear",
 		weekStart: 1,
-		format: "dd/mm/yyyy"
+		format: "dd/mm/yyyy",
+        dateModel: Date
 	};
 }(jQuery));

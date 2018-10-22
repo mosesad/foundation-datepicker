@@ -9,6 +9,7 @@
 		daysMin: ["N", "Po", "U", "Sr", "Č", "Pe", "Su", "N"],
 		months: ["Januar", "Februar", "Mart", "April", "Maj", "Jun", "Jul", "Avgust", "Septembar", "Oktobar", "Novembar", "Decembar"],
 		monthsShort: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Avg", "Sep", "Okt", "Nov", "Dec"],
-		today: "Danas"
+		today: "Danas",
+        dateModel: Date
 	};
 }(jQuery));

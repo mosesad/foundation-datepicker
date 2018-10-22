@@ -12,6 +12,7 @@
 		today: "امروز",
 		clear: "پاک کن",
 		weekStart: 1,
-		format: "yyyy/mm/dd"
+		format: "yyyy/mm/dd",
+        dateModel: Date
 	};
 }(jQuery));
