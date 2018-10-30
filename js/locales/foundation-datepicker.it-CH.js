@@ -6,7 +6,7 @@
  * Enrico Rubboli <rubboli@gmail.com>
  */
 ;(function($){
-	$.fn.fdatepicker.dates['it'] = {
+	$.fn.fdatepicker.dates['it-CH'] = {
 		days: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
 		daysShort: ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"],
 		daysMin: ["Do", "Lu", "Ma", "Me", "Gi", "Ve", "Sa"],
@@ -15,7 +15,16 @@
 		today: "Oggi",
 		clear: "Cancella",
 		weekStart: 1,
-		format: "dd.mm.yyyy",
-        dateModel: Date
+		format: "dd.mm.yyyy"
 	};
+
+    $.fn.fdatepicker.dates['it-CH-UL'] = {
+        days: ["Ahad", "Ithnin", "Thulatha", "Arba'a", "Khams", "Jumu'ah", "Sabt"],
+        daysShort: ["Ahad", "Ithnin", "Thulatha", "Arba'a", "Khams", "Jumu'ah", "Sabt"],
+        daysMin: ["Ahd", "Ith", "Thu", "Arb", "Kha", "Jum", "Sab"],
+        months: ["Muharram", "Safar", "‎Rabi'ul-Awwal", "Rabi'ul-Akhir", "Jumadal-Ula", "Jumadal-Akhir", "‎Rajab", "Sha'ban", "Ramadan", "Syawwal", "‎Dhul-Qa'da", "Dhul-Hijja"],
+        monthsShort: ["Muh", "Saf", "RAw", "RAk", "JAw", "JAk", "Raj", "Sha", "Ram", "Sya", "DhQ", "DhH"],
+        today: "Today",
+        format: " mm-yyyy"
+    }
 }(jQuery));

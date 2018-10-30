@@ -13,7 +13,16 @@
 		clear: "삭제",
 		format: "YYYY-MM-DD",
 		titleFormat: "yyyy년mm월",
-		weekStart: 0,
-        dateModel: Date
+		weekStart: 0
 	};
+
+    $.fn.fdatepicker.dates['ko-UL'] = {
+        days: ["Ahad", "Ithnin", "Thulatha", "Arba'a", "Khams", "Jumu'ah", "Sabt"],
+        daysShort: ["Ahad", "Ithnin", "Thulatha", "Arba'a", "Khams", "Jumu'ah", "Sabt"],
+        daysMin: ["Ahd", "Ith", "Thu", "Arb", "Kha", "Jum", "Sab"],
+        months: ["Muharram", "Safar", "‎Rabi'ul-Awwal", "Rabi'ul-Akhir", "Jumadal-Ula", "Jumadal-Akhir", "‎Rajab", "Sha'ban", "Ramadan", "Syawwal", "‎Dhul-Qa'da", "Dhul-Hijja"],
+        monthsShort: ["Muh", "Saf", "RAw", "RAk", "JAw", "JAk", "Raj", "Sha", "Ram", "Sya", "DhQ", "DhH"],
+        today: "Today",
+        format: " mm-yyyy"
+    }
 }(jQuery));
