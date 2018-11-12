@@ -1223,6 +1223,7 @@
             };
         },
         parseDate: function(date, format, language) {
+            if (date instanceof HijriDate) return date;
             if (date instanceof Date) return new _Date(date.valueOf() - date.getTimezoneOffset() * 60000);
             if (/^\d{4}\-\d{1,2}\-\d{1,2}$/.test(date)) {
                 format = this.parseFormat('yyyy-mm-dd');
