@@ -1163,11 +1163,11 @@
             dateModel: Date
         },
         'en-UL':  {
-            days: ["Ahad", "Ithnin", "Thulatha", "Arba'a", "Khams", "Jumu'ah", "Sabt"],
-            daysShort: ["Ahad", "Ithnin", "Thulatha", "Arba'a", "Khams", "Jumu'ah", "Sabt"],
-            daysMin: ["Ahd", "Ith", "Thu", "Arb", "Kha", "Jum", "Sab"],
-            months: ["Muharram", "Safar", "‎Rabi'ul-Awwal", "Rabi'ul-Akhir", "Jumadal-Ula", "Jumadal-Akhir", "‎Rajab", "Sha'ban", "Ramadan", "Syawwal", "‎Dhul-Qa'da", "Dhul-Hijja"],
-            monthsShort: ["Muh", "Saf", "RAw", "RAk", "JAw", "JAk", "Raj", "Sha", "Ram", "Sya", "DhQ", "DhH"],
+            days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+            daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+            months: ["Muharram", "Safar", "‎Rabi Al-Awwal", "Rabi Al-Thani", "Jumada Al-Awwal", "Jumada Al-Akhirah", "‎Rajab", "Shaban", "Ramadan", "Shawwal", "‎Dhu Al-Qidah", "Dhu Al-Hijjah"],
+            monthsShort: ["Muh", "Saf", "Rab I", "Rab II", "Jum I", "Jum II", "Raj", "Sha", "Ram", "Shaw", "Dhul-Q", "Dhul-H"],
             today: "Today",
             format: " mm-yyyy"
         }
@@ -1725,14 +1725,14 @@
         // value of time interval in milliseconds
         // from July 18, 622AD 06:00 PM to January 1, 1970AD, 00:00 AM
 
-    window.HijriDate.monthNames = ["Muharram", "Safar", "Rabi'ul-Awwal", "Rabi'ul-Akhir", "Jumadal-Ula", "Jumadal-Akhir",
-                        "Rajab", "Sha'ban", "Ramadan", "Syawwal", "Dhul-Qa'da", "Dhul-Hijja"];
+    window.HijriDate.monthNames = ["Muharram", "Safar", "‎Rabi Al-Awwal", "Rabi Al-Thani", "Jumada Al-Awwal", "Jumada Al-Akhirah",
+						"‎Rajab", "Shaban", "Ramadan", "Shawwal", "‎Dhu Al-Qidah", "Dhu Al-Hijjah"];
 
-    window.HijriDate.monthShortNames = ['Muh', 'Saf', 'RAw', 'RAk', 'JAw', 'JAk', 'Raj', 'Sha', 'Ram', 'Sya', 'DhQ', 'DhH'];
+    window.HijriDate.monthShortNames = ["Muh", "Saf", "Rab I", "Rab II", "Jum I", "Jum II", "Raj", "Sha", "Ram", "Shaw", "Dhul-Q", "Dhul-H"];
 
-    window.HijriDate.weekdayNames = ["Ahad", "Ithnin", "Thulatha", "Arba'a", "Khams", "Jumu'ah", "Sabt"];
+    window.HijriDate.weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
 
-    window.HijriDate.weekdayShortNames = ['Ahd', 'Ith', 'Thu', 'Arb', 'Kha', 'Jum', 'Sab'];
+    window.HijriDate.weekdayShortNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                         
     window.HijriDate.toDigit = function(num, digit) {
         var ns = num.toString();
